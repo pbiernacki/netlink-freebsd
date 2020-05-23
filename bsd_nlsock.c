@@ -291,17 +291,8 @@ netlink_peeraddr(struct socket *so, struct sockaddr **nam)
 	return ENOTCONN;
 }
 
-/*
- * netlink_output is varargs on newer FreeBSD
- */
-#if __FreeBSD_version > 1100028
-#define NLO_EXTRA , ...
-#else
-#define NLO_EXTRA
-#endif /* newer freebsd */
-
 static int
-netlink_output(struct mbuf *m, struct socket *so NLO_EXTRA );
+netlink_output(struct mbuf *m, struct socket *so, ...);
 
 /*
  * send*() from userspace to a netlink socket
@@ -368,7 +359,7 @@ static struct pr_usrreqs netlink_usrreqs = {
 
 
 static int
-netlink_output(struct mbuf *m, struct socket *so NLO_EXTRA )
+netlink_output(struct mbuf *m, struct socket *so, ...)
 {
 	int ret;
 	struct rawcb *rp;
@@ -474,9 +465,9 @@ static struct protosw netlinksw[] = {
 
 static struct domain netlinkdomain = {
 	.dom_family =		PF_NETLINK,
-	.dom_name =		 "netlink",
+	.dom_name =		"netlink",
 	.dom_protosw =		netlinksw,
-	.dom_protoswNPROTOSW =	&netlinksw[sizeof(netlinksw)/sizeof(netlinksw[0])]
+	.dom_protoswNPROTOSW =	&netlinksw[nitems(netlinksw)],
 };
 
 VNET_DOMAIN_SET(netlink);

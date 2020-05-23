@@ -29,6 +29,7 @@
  * $FreeBSD$
  */
 #include <sys/types.h>
+#include <sys/cdefs.h>
 #include <sys/systm.h>
 #include <sys/syslog.h>
 #include <sys/libkern.h>
@@ -539,7 +540,7 @@ void
 nlmsg_trim(struct mbuf *m, const void * start)
 {
 	// XXX validity checks ?
-	m->m_pkthdr.len = (char *)start - (char *)_M_BUFSTART(m);
+	m->m_pkthdr.len = __DECONST(char *, start) - (char *)_M_BUFSTART(m);
 }
 
 /*
